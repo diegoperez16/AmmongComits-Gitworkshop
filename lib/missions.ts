@@ -37,12 +37,12 @@ export const MISSIONS: Mission[] = [
     badge: 'SETUP',
     whatYouLearn: 'WHAT: git clone downloads a complete copy of a repository to your computer.\n\nWHY: This is how you start working on any existing project - you need the code locally to view, edit, and run it.',
     steps: [
-      'Clone: git clone https://github.com/diegoperezgandarillas/Neon-Runner-Artifact-Heist.git',
+      'Clone: git clone <repo-url>   (see the Game Repository link at the top of this page)',
       'Navigate: cd Neon-Runner-Artifact-Heist',
       'Create virtualenv: python3 -m venv venv',
       'Activate: source venv/bin/activate (Mac/Linux) or venv\\Scripts\\activate (Windows)',
-      'Install: pip install -r requirements.txt',
-      'Run: python main.py and play for 30 seconds!'
+      'Install dependencies: pip install -r requirements.txt',
+      'Run: python3 main.py   A game window should open — play for 30 seconds!'
     ],
     claimedBy: null,
     claimedAt: null,
@@ -401,18 +401,18 @@ export const MISSIONS: Mission[] = [
     id: '38',
     mission_id: 'detective-4',
     title: 'The Hidden Message',
-    description: 'Find the secret message hidden in the repository to uncover the culprit\'s real name',
+    description: 'Find the file the saboteur accidentally committed to uncover their real name',
     category: 'detective',
     difficulty: 'Hard',
     badge: 'SECRET',
     whatYouLearn: 'Exploring repository files and finding hidden content',
     steps: [
-      'The saboteur left a clue somewhere unexpected',
-      'Check all files in the repo: ls -la',
-      'Look for unusual files - movie scripts don\'t belong in game code!',
-      'Use cat, less, or grep to search file contents',
-      'Find the file with the Shrek script and search for the secret',
-      'Submit evidence: The culprit\'s real name from the hidden message'
+      'List all files in the repo root: ls -la',
+      'One file does not belong in a game project — open it',
+      'Read it carefully: cat WORKING_NOTES.txt',
+      'Scroll to the very bottom of the file',
+      'Submit evidence: The real name signed at the bottom',
+      'Bonus: A deleted file is also hiding in git history — try: git log --all --diff-filter=D --name-only --format="" | grep -v "^$"'
     ],
     claimedBy: null,
     claimedAt: null,
@@ -429,9 +429,9 @@ export const MISSIONS: Mission[] = [
     badge: 'COIN',
     whatYouLearn: 'Using git log and git show to find bugs',
     steps: [
-      'Use git log --all main.py to see main.py commit history',
-      'Use git show <hash> to inspect each commit',
-      'Find the commit that changed coin rendering code',
+      'Use git log -- main.py to see main.py commit history',
+      'Use git show <hash> to inspect each commit — look at the Draw artifacts section',
+      'Find the commit that replaced the blit call with pass',
       'Revert the bad commit: git revert <hash>',
       'Keep "Revert" in the commit message (default is fine)',
       'Submit evidence: Commit hash'
@@ -453,7 +453,7 @@ export const MISSIONS: Mission[] = [
     steps: [
       'Use git log --all -S"ENEMY_SPEED" to find speed changes',
       'Use git show <hash> to see what changed',
-      'Identify commit that changed speed from 2 to 20',
+      'Identify commit that changed ENEMY_SPEED from 150 to 600',
       'Revert it: git revert <hash>',
       'Keep "Revert" in the commit message',
       'Submit evidence: Commit hash and author'
@@ -488,16 +488,16 @@ export const MISSIONS: Mission[] = [
   {
     id: '12',
     mission_id: 'detective-8',
-    title: 'Fix: Invincible Player',
-    description: 'Find and revert the commit that made player invincible',
+    title: 'Fix: Player Never Dies',
+    description: 'Find and revert the commit that broke the damage system — health gets set instead of reduced',
     category: 'detective',
     difficulty: 'Medium',
     badge: 'DAMAGE',
     whatYouLearn: 'Using git log with file paths',
     steps: [
-      'Use git log --all game/level.py to see level.py history',
-      'Use git show <hash> to inspect collision-related changes',
-      'Find commit that modified collision detection',
+      'Use git log -- game/player.py to see player.py history',
+      'Use git show <hash> to inspect each commit',
+      'Find the commit that changed take_damage — look at the -= vs = operator',
       'Revert it: git revert <hash>',
       'Keep "Revert" in the commit message',
       'Submit evidence: Commit hash'
@@ -517,9 +517,9 @@ export const MISSIONS: Mission[] = [
     badge: 'CONTROL',
     whatYouLearn: 'Using git log with grep patterns',
     steps: [
-      'Use git log --all -S"dx" to find control changes',
-      'Check commits about controls or movement',
-      'Find commit that swapped left/right dx values',
+      'Use git log -- game/player.py to see player movement history',
+      'Use git show <hash> on commits that touched the move() method',
+      'Find the commit that swapped dx and dy — moving right now moves down',
       'Revert it: git revert <hash>',
       'Keep "Revert" in the commit message',
       'Submit evidence: Date and author of commit'

@@ -26,6 +26,29 @@ export interface Database {
           created_at?: string
         }
       }
+      scores: {
+        Row: {
+          id: string
+          username: string
+          score: number
+          game_time: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          username: string
+          score: number
+          game_time?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          username?: string
+          score?: number
+          game_time?: number
+          created_at?: string
+        }
+      }
       missions: {
         Row: {
           id: string

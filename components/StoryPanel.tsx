@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Mission, STORY_PARTS } from '@/lib/missions';
 
 interface StoryPanelProps {
@@ -8,6 +9,7 @@ interface StoryPanelProps {
 }
 
 export default function StoryPanel({ missions, currentUser }: StoryPanelProps) {
+  const [collapsed, setCollapsed] = useState(false);
   const userCompletedMissions = missions.filter(m => m.completedBy.includes(currentUser));
   
   const revealedParts = new Set<string>();
@@ -29,21 +31,27 @@ export default function StoryPanel({ missions, currentUser }: StoryPanelProps) {
       marginBottom: '30px',
       boxShadow: '0 4px 6px rgba(0,0,0,0.3)'
     }}>
-      <div style={{ marginBottom: '20px' }}>
-        <h2 style={{ 
-          fontSize: '24px', 
-          fontWeight: '700', 
-          color: '#fff', 
-          marginBottom: '10px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px'
-        }}>
+      <div style={{ marginBottom: collapsed ? 0 : '20px' }}>
+        <h2
+          onClick={() => setCollapsed(!collapsed)}
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            color: '#fff',
+            marginBottom: collapsed ? 0 : '10px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            cursor: 'pointer',
+            userSelect: 'none',
+          }}
+        >
+          <span style={{ fontSize: '14px', color: '#6b7280' }}>{collapsed ? '▶' : '▼'}</span>
           THE CASE FILE
-          <span style={{ 
-            fontSize: '14px', 
-            background: '#4a5568', 
-            padding: '4px 12px', 
+          <span style={{
+            fontSize: '14px',
+            background: '#4a5568',
+            padding: '4px 12px',
             borderRadius: '12px',
             fontWeight: 'normal'
           }}>
@@ -52,25 +60,27 @@ export default function StoryPanel({ missions, currentUser }: StoryPanelProps) {
         </h2>
         
         {/* Progress Bar */}
-        <div style={{
-          width: '100%',
-          height: '8px',
-          background: '#2d3748',
-          borderRadius: '4px',
-          overflow: 'hidden',
-          marginBottom: '20px'
-        }}>
+        {!collapsed && (
           <div style={{
-            width: `${progress}%`,
-            height: '100%',
-            background: 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%)',
-            transition: 'width 0.5s ease'
-          }}></div>
-        </div>
+            width: '100%',
+            height: '8px',
+            background: '#2d3748',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            marginBottom: '20px'
+          }}>
+            <div style={{
+              width: `${progress}%`,
+              height: '100%',
+              background: 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%)',
+              transition: 'width 0.5s ease'
+            }}></div>
+          </div>
+        )}
       </div>
 
       {/* Story Parts */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      {!collapsed && <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         {storyOrder.map((part) => {
           const isRevealed = revealedParts.has(part);
           return (
@@ -115,9 +125,9 @@ export default function StoryPanel({ missions, currentUser }: StoryPanelProps) {
             </div>
           );
         })}
-      </div>
+      </div>}
 
-      {progress === 100 && (
+      {!collapsed && progress === 100 && (
         <div style={{
           marginTop: '20px',
           padding: '20px',

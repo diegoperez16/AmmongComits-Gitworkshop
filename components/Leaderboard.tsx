@@ -42,8 +42,20 @@ export default function Leaderboard() {
   const [lastRefresh, setLastRefresh] = useState(new Date());
 
   const load = async () => {
-    const { data, error } = await supabase.from('scores').select('*').order('score', { ascending: false }).limit(10);
-    if (!error && data) setScores(data as ScoreEntry[]);
+    const { data, error } = await supabase.from('scores').select('*').order('score', { ascending: false });
+    if (!error && data) {
+      // Keep only the top score per user
+      const seen = new Set<string>();
+      const deduped: ScoreEntry[] = [];
+      for (const entry of data as ScoreEntry[]) {
+        if (!seen.has(entry.username)) {
+          seen.add(entry.username);
+          deduped.push(entry);
+          if (deduped.length === 10) break;
+        }
+      }
+      setScores(deduped);
+    }
     setLoading(false);
     setLastRefresh(new Date());
   };

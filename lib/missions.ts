@@ -17,13 +17,13 @@ export interface Mission {
 }
 
 export const STORY_PARTS = {
-  team: "The Neon Runner game was developed by a team of 5 talented developers: Vivi, Carlos, Pierre, Diego, and one mysterious contributor. They worked together for months, building the game from scratch.",
-  culprit: "After investigating the git history, a pattern emerges. All the breaking commits trace back to one developer. But who is this saboteur?",
-  sabotage: "The bugs weren't accidents - they were deliberate. Someone sabotaged the coin rendering, enemy speeds, scoring system, and more. Each change broke something critical.",
-  evidence: "By examining the commits in detail, you can see the saboteur's strategy: subtle changes to game mechanics that looked innocent but completely broke gameplay. But their identity remains hidden.",
-  secretMessage: "A secret message was hidden in the repository - in the most unexpected place. Finding it reveals the culprit's real name: Alfredo. The clues were there all along, hidden in plain sight.",
-  tension: "Why would Alfredo do this? Looking at the commit timeline and team communications, it becomes clear: he felt overlooked and undervalued by the team despite his contributions.",
-  resolution: "Through Git investigation, you've uncovered the whole story. By reverting his sabotage commits and discovering his hidden message, the game is fixed. The team now understands what happened and can address the real issue - making everyone feel valued."
+  team: "The Neon Runner game was developed by a team of 5 developers: Vivi, Carlos, Pierre, Diego, and one other contributor. They worked together for months, building the game from scratch. But not everything went as planned.",
+  sabotage: "The bugs weren't accidents — they were deliberate. Someone sabotaged the coin rendering, enemy speeds, scoring system, and player controls. Each change was subtle enough to look like a mistake, but together they broke the game completely.",
+  culprit: "After investigating the git history, a pattern emerges. All the breaking commits trace back to one contributor: mayfirestories. But why would someone on the team do this?",
+  evidence: "By examining the commits in detail, the saboteur's strategy becomes clear: targeted, surgical changes to core game mechanics. Each one looked plausible on its own. But there's still a piece of the story missing.",
+  secretMessage: "A file was committed to the repo — then deleted the next day. Only findable through git archaeology, it's a letter. In it, the saboteur reveals their real name: Alfredo. And the reason behind everything.",
+  tension: "Here's the twist: on November 14th — the same day Alfredo wrote the letter — Diego quietly updated CREDITS.md. Alfredo had been listed as Lead Game Designer. After the update, his name was gone, and Diego gave himself the title. Alfredo didn't just feel overlooked. He was erased.",
+  resolution: "The full picture: Alfredo built core systems, was promised credit, then silently removed from the project. The sabotage was retaliation. Diego deleted the letter the next morning. Through git, nothing is truly gone — and now you know the whole story."
 };
 
 export const MISSIONS: Mission[] = [
@@ -470,10 +470,11 @@ export const MISSIONS: Mission[] = [
     difficulty: 'Hard',
     badge: 'SECRET',
     whatYouLearn: 'Exploring repository files and finding hidden content',
-    commands: ['ls -la', 'git log --diff-filter=D --name-only', 'git show <hash>'],
+    commands: ['ls -la', 'git log --diff-filter=D --name-only', 'git show <hash>', 'git log -- CREDITS.md'],
     steps: [
-      'Look at the repo root carefully — does every file belong in a game project?',
-      'Something was also deleted from git history. Can you find what\'s missing? (git log --diff-filter=D)',
+      'Use git log --diff-filter=D --name-only to find files that were deleted from history',
+      'Once you have the hash of the deletion commit, git show <hash> reveals what was in the file',
+      'While you\'re at it — look at the history of CREDITS.md. Who was listed at first? Who was removed?',
     ],
     claimedBy: null,
     claimedAt: null,

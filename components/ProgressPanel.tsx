@@ -56,7 +56,7 @@ export default function ProgressPanel() {
 
   const loadProgress = async () => {
     const { data: missionData } = await supabase.from('missions').select('mission_id, completed_by, category');
-    const { data: userData }    = await supabase.from('users').select('username');
+    const { data: userData }    = await supabase.from('users').select('username') as { data: { username: string }[] | null };
     if (!userData) { setLoading(false); return; }
 
     const userMap: Record<string, UserProgress> = {};

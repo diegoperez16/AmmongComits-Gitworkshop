@@ -74,7 +74,7 @@ export default function MissionCard({ mission, currentUser, onComplete }: Missio
           )}
           {mission.steps && (
             <div style={{ marginTop: '15px', padding: '15px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px' }}>
-              <strong style={{ display: 'block', marginBottom: '8px', color: '#cbd5e0' }}>Steps:</strong>
+              <strong style={{ display: 'block', marginBottom: '8px', color: '#cbd5e0' }}>Stuck? Try this:</strong>
               <ul style={{ paddingLeft: '20px', color: '#a0aec0', fontSize: '13px', lineHeight: '1.8' }}>
                 {mission.steps.map((step, idx) => <li key={idx}>{step}</li>)}
               </ul>
@@ -112,7 +112,7 @@ export default function MissionCard({ mission, currentUser, onComplete }: Missio
       <div className="mission-actions">
         {mission.steps && (
           <button onClick={() => setExpanded(!expanded)} className="btn" style={{ background: '#4a5568', color: '#fff' }}>
-            {expanded ? 'Hide Details' : 'Show Details'}
+            {expanded ? 'Hide Hints' : 'Need a hint?'}
           </button>
         )}
 

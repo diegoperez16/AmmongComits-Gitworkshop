@@ -42,6 +42,22 @@ export default function MissionCard({ mission, currentUser, onComplete }: Missio
 
       <p className="mission-description">{mission.description}</p>
 
+      {mission.commands && mission.commands.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', margin: '10px 0' }}>
+          {mission.commands.map((cmd, idx) => (
+            <code key={idx} style={{
+              background: 'rgba(0,0,0,0.4)',
+              border: '1px solid #4a5568',
+              borderRadius: '4px',
+              padding: '3px 8px',
+              fontSize: '12px',
+              color: '#5dd9c1',
+              fontFamily: 'monospace',
+            }}>{cmd}</code>
+          ))}
+        </div>
+      )}
+
       <div className="mission-meta">
         <span>Difficulty: {mission.difficulty}</span>
         {mission.completedBy.length > 0 && (

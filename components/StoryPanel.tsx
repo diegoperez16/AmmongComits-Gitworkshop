@@ -12,14 +12,34 @@ export default function StoryPanel({ missions, currentUser }: StoryPanelProps) {
   const [collapsed, setCollapsed] = useState(false);
   const userCompletedMissions = missions.filter(m => m.completedBy.includes(currentUser));
   
-  const revealedParts = new Set<string>();
+  const completedStoryParts = new Set<string>();
   userCompletedMissions.forEach(mission => {
-    if (mission.storyPart) {
-      revealedParts.add(mission.storyPart);
-    }
+    if (mission.storyPart) completedStoryParts.add(mission.storyPart);
   });
 
-  const storyOrder = ['intro', 'team', 'tension', 'sabotage', 'evidence', 'resolution'];
+  const storyOrder: Array<{ key: keyof typeof STORY_PARTS; label: string; unlockedBy: string }> = [
+    { key: 'team',          label: 'The Team',           unlockedBy: 'List All Collaborators' },
+    { key: 'sabotage',      label: 'The Sabotage',       unlockedBy: 'Fix: Coins Not Visible or Enemies Too Fast' },
+    { key: 'culprit',       label: 'A Suspect Emerges',  unlockedBy: 'Identify the Saboteur' },
+    { key: 'evidence',      label: 'The Evidence',       unlockedBy: 'Fix: Score Goes Down or Player Never Dies' },
+    { key: 'secretMessage', label: 'The Hidden Message', unlockedBy: 'The Hidden Message' },
+    { key: 'tension',       label: 'The Motive',         unlockedBy: 'Fix: Backwards Controls' },
+    { key: 'resolution',    label: 'Case Closed',        unlockedBy: 'The Pattern Emerges' },
+  ];
+
+  // A part is only revealed if its mission is done AND all previous parts are also revealed
+  const revealedParts = new Set<string>();
+  for (const { key } of storyOrder) {
+    const allPreviousRevealed = storyOrder
+      .slice(0, storyOrder.findIndex(s => s.key === key))
+      .every(s => revealedParts.has(s.key));
+    if (completedStoryParts.has(key) && allPreviousRevealed) {
+      revealedParts.add(key);
+    } else {
+      break; // chain breaks — no point checking further
+    }
+  }
+
   const progress = (revealedParts.size / storyOrder.length) * 100;
 
   return (
@@ -80,74 +100,52 @@ export default function StoryPanel({ missions, currentUser }: StoryPanelProps) {
       </div>
 
       {/* Story Parts */}
-      {!collapsed && <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        {storyOrder.map((part) => {
-          const isRevealed = revealedParts.has(part);
+      {!collapsed && <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {storyOrder.map(({ key, label, unlockedBy }, idx) => {
+          const isRevealed = revealedParts.has(key);
+          const prevUnlocked = idx === 0 || revealedParts.has(storyOrder[idx - 1].key);
+          const blockingPart = !prevUnlocked ? storyOrder[idx - 1].label : null;
           return (
-            <div 
-              key={part}
+            <div
+              key={key}
               style={{
                 background: isRevealed ? 'rgba(59, 130, 246, 0.1)' : 'rgba(0,0,0,0.2)',
                 border: `1px solid ${isRevealed ? '#3b82f6' : '#4a5568'}`,
                 borderRadius: '8px',
-                padding: '15px',
+                padding: '14px 16px',
                 transition: 'all 0.3s ease'
               }}
             >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: isRevealed ? '8px' : 0 }}>
+                <div style={{
+                  width: '10px', height: '10px', borderRadius: '50%', flexShrink: 0,
+                  background: isRevealed ? '#3b82f6' : '#4a5568',
+                }} />
+                <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: isRevealed ? '#60a5fa' : '#6b7280' }}>
+                  {label}
+                </span>
+                {!isRevealed && (
+                  <span style={{ fontSize: '11px', color: '#4b5563', marginLeft: 'auto' }}>
+                    Unlock: {unlockedBy}
+                  </span>
+                )}
+              </div>
               {isRevealed ? (
-                <p style={{ 
-                  color: '#cbd5e0', 
-                  lineHeight: '1.6',
-                  margin: 0,
-                  fontSize: '15px'
-                }}>
-                  {STORY_PARTS[part as keyof typeof STORY_PARTS]}
+                <p style={{ color: '#cbd5e0', lineHeight: '1.6', margin: 0, fontSize: '14px' }}>
+                  {STORY_PARTS[key]}
                 </p>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '50%',
-                    border: '2px solid #4a5568',
-                    background: '#2d3748'
-                  }}></div>
-                  <p style={{ 
-                    color: '#718096', 
-                    margin: 0,
-                    fontStyle: 'italic',
-                    fontSize: '14px'
-                  }}>
-                    Locked - Complete more missions to reveal
-                  </p>
-                </div>
+                <p style={{ color: '#4b5563', margin: 0, fontStyle: 'italic', fontSize: '13px' }}>
+                  {blockingPart
+                    ? `Reveal "${blockingPart}" first.`
+                    : `Complete "${unlockedBy}" to reveal this part of the story.`}
+                </p>
               )}
             </div>
           );
         })}
       </div>}
 
-      {!collapsed && progress === 100 && (
-        <div style={{
-          marginTop: '20px',
-          padding: '20px',
-          background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-          borderRadius: '8px',
-          textAlign: 'center'
-        }}>
-          <h3 style={{ 
-            color: '#fff', 
-            fontSize: '20px', 
-            fontWeight: 'bold',
-            marginBottom: '10px' 
-          }}>
-            CASE CLOSED
-          </h3>
-          <p style={{ color: '#fff', margin: 0 }}>
-            You've uncovered the whole story! All bugs are fixed and the truth has been revealed.
-          </p>
-        </div>
-      )}
     </div>
   );
 }

@@ -55,7 +55,7 @@ export default function ProgressPanel() {
   const [sortBy, setSortBy]           = useState<'total' | 'detective'>('total');
 
   const loadProgress = async () => {
-    const { data: missionData } = await supabase.from('missions').select('mission_id, completed_by, category');
+    const { data: missionData } = await supabase.from('missions').select('mission_id, completed_by, category') as { data: { mission_id: string; completed_by: string[]; category: string }[] | null };
     const { data: userData }    = await supabase.from('users').select('username') as { data: { username: string }[] | null };
     if (!userData) { setLoading(false); return; }
 
